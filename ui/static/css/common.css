@@ -122,6 +122,7 @@ a:hover {
 .page-footer li {
     list-style-type: none;
     line-height: 1.8em;
+    white-space: nowrap;
 }
 
 .page-header ul a .icon {
@@ -404,6 +405,10 @@ textarea:focus {
 input::placeholder {
     color: var(--input-placeholder-color);
     padding-top: 2px;
+}
+
+.form-label-row {
+    display: flex;
 }
 
 .form-help {
@@ -756,7 +761,7 @@ template {
     display: none;
 }
 
-.touch-item {
+.entry-swipe {
     transition-property: transform;
     transition-duration: 0s;
     transition-timing-function: ease-out;
@@ -783,6 +788,13 @@ article.feed-has-unread {
 
 .parsing-error-count {
     cursor: pointer;
+}
+
+/* Categories list */
+article.category-has-unread {
+    background-color: var(--category-has-unread-background-color);
+    border-style: var(--category-has-unread-border-style);
+    border-color: var(--category-has-unread-border-color);
 }
 
 /* Icons */
@@ -1066,10 +1078,6 @@ details.entry-enclosures {
     font-weight: 600;
     text-decoration: none;
     font-size: 1.2em;
-}
-
-.rules-entry {
-    display: flex;
 }
 
 .disabled {

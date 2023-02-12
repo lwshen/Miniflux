@@ -81,11 +81,16 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			double_tap,
 			stylesheet,
 			google_id,
 			openid_connect_id,
 			display_mode,
-			entry_order
+			entry_order,
+		    default_reading_speed,
+		    cjk_reading_speed,
+		    default_home_page,
+		    categories_sorting_order
 	`
 
 	tx, err := s.db.Begin()
@@ -113,11 +118,16 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 		&user.KeyboardShortcuts,
 		&user.ShowReadingTime,
 		&user.EntrySwipe,
+		&user.DoubleTap,
 		&user.Stylesheet,
 		&user.GoogleID,
 		&user.OpenIDConnectID,
 		&user.DisplayMode,
 		&user.EntryOrder,
+		&user.DefaultReadingSpeed,
+		&user.CJKReadingSpeed,
+		&user.DefaultHomePage,
+		&user.CategoriesSortingOrder,
 	)
 	if err != nil {
 		tx.Rollback()
@@ -164,13 +174,18 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				keyboard_shortcuts=$9,
 				show_reading_time=$10,
 				entry_swipe=$11,
-				stylesheet=$12,
-				google_id=$13,
-				openid_connect_id=$14,
-				display_mode=$15,
-				entry_order=$16
+				double_tap=$12,
+				stylesheet=$13,
+				google_id=$14,
+				openid_connect_id=$15,
+				display_mode=$16,
+				entry_order=$17,
+				default_reading_speed=$18,
+				cjk_reading_speed=$19,
+				default_home_page=$20,
+				categories_sorting_order=$21
 			WHERE
-				id=$17
+				id=$22
 		`
 
 		_, err = s.db.Exec(
@@ -186,11 +201,16 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.KeyboardShortcuts,
 			user.ShowReadingTime,
 			user.EntrySwipe,
+			user.DoubleTap,
 			user.Stylesheet,
 			user.GoogleID,
 			user.OpenIDConnectID,
 			user.DisplayMode,
 			user.EntryOrder,
+			user.DefaultReadingSpeed,
+			user.CJKReadingSpeed,
+			user.DefaultHomePage,
+			user.CategoriesSortingOrder,
 			user.ID,
 		)
 		if err != nil {
@@ -209,13 +229,18 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				keyboard_shortcuts=$8,
 				show_reading_time=$9,
 				entry_swipe=$10,
-				stylesheet=$11,
-				google_id=$12,
-				openid_connect_id=$13,
-				display_mode=$14,
-				entry_order=$15
+				double_tap=$11,
+				stylesheet=$12,
+				google_id=$13,
+				openid_connect_id=$14,
+				display_mode=$15,
+				entry_order=$16,
+				default_reading_speed=$17,
+				cjk_reading_speed=$18,
+				default_home_page=$19,
+				categories_sorting_order=$20
 			WHERE
-				id=$16
+				id=$21
 		`
 
 		_, err := s.db.Exec(
@@ -230,11 +255,16 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.KeyboardShortcuts,
 			user.ShowReadingTime,
 			user.EntrySwipe,
+			user.DoubleTap,
 			user.Stylesheet,
 			user.GoogleID,
 			user.OpenIDConnectID,
 			user.DisplayMode,
 			user.EntryOrder,
+			user.DefaultReadingSpeed,
+			user.CJKReadingSpeed,
+			user.DefaultHomePage,
+			user.CategoriesSortingOrder,
 			user.ID,
 		)
 
@@ -271,12 +301,17 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			double_tap,
 			last_login_at,
 			stylesheet,
 			google_id,
 			openid_connect_id,
 			display_mode,
-			entry_order
+			entry_order,
+			default_reading_speed,
+			cjk_reading_speed,
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		WHERE
@@ -300,12 +335,17 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			double_tap,
 			last_login_at,
 			stylesheet,
 			google_id,
 			openid_connect_id,
 			display_mode,
-			entry_order
+			entry_order,
+			default_reading_speed,
+			cjk_reading_speed,
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		WHERE
@@ -329,12 +369,17 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			double_tap,
 			last_login_at,
 			stylesheet,
 			google_id,
 			openid_connect_id,
 			display_mode,
-			entry_order
+			entry_order,
+			default_reading_speed,
+			cjk_reading_speed,
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		WHERE
@@ -365,12 +410,17 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.keyboard_shortcuts,
 			u.show_reading_time,
 			u.entry_swipe,
+			u.double_tap,
 			u.last_login_at,
 			u.stylesheet,
 			u.google_id,
 			u.openid_connect_id,
 			u.display_mode,
-			u.entry_order
+			u.entry_order,
+			u.default_reading_speed,
+			u.cjk_reading_speed,
+			u.default_home_page,
+			u.categories_sorting_order
 		FROM
 			users u
 		LEFT JOIN
@@ -395,12 +445,17 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.KeyboardShortcuts,
 		&user.ShowReadingTime,
 		&user.EntrySwipe,
+		&user.DoubleTap,
 		&user.LastLoginAt,
 		&user.Stylesheet,
 		&user.GoogleID,
 		&user.OpenIDConnectID,
 		&user.DisplayMode,
 		&user.EntryOrder,
+		&user.DefaultReadingSpeed,
+		&user.CJKReadingSpeed,
+		&user.DefaultHomePage,
+		&user.CategoriesSortingOrder,
 	)
 
 	if err == sql.ErrNoRows {
@@ -487,12 +542,17 @@ func (s *Storage) Users() (model.Users, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			double_tap,
 			last_login_at,
 			stylesheet,
 			google_id,
 			openid_connect_id,
 			display_mode,
-			entry_order
+			entry_order,
+			default_reading_speed,
+			cjk_reading_speed,
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		ORDER BY username ASC
@@ -518,12 +578,17 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.KeyboardShortcuts,
 			&user.ShowReadingTime,
 			&user.EntrySwipe,
+			&user.DoubleTap,
 			&user.LastLoginAt,
 			&user.Stylesheet,
 			&user.GoogleID,
 			&user.OpenIDConnectID,
 			&user.DisplayMode,
 			&user.EntryOrder,
+			&user.DefaultReadingSpeed,
+			&user.CJKReadingSpeed,
+			&user.DefaultHomePage,
+			&user.CategoriesSortingOrder,
 		)
 
 		if err != nil {

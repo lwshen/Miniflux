@@ -591,4 +591,51 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN url_rewrite_rules text not null default ''
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN default_reading_speed int default 265;
+			ALTER TABLE users ADD COLUMN cjk_reading_speed int default 500;
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN default_home_page text default 'unread';
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE integrations ADD COLUMN wallabag_only_url bool default 'f';
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN categories_sorting_order text not null default 'unread_count';
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN matrix_bot_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN matrix_bot_user text default '';
+			ALTER TABLE integrations ADD COLUMN matrix_bot_password text default '';
+			ALTER TABLE integrations ADD COLUMN matrix_bot_url text default '';
+			ALTER TABLE integrations ADD COLUMN matrix_bot_chat_id text default '';
+		`
+		_, err = tx.Exec(sql)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN double_tap boolean default 't'`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

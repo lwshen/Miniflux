@@ -9,6 +9,7 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	"miniflux.app/locale"
 	"miniflux.app/model"
 	"miniflux.app/proxy"
 	"miniflux.app/reader/processor"
@@ -34,6 +35,14 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := h.store.UserByID(entry.UserID)
+	if err != nil {
+		json.ServerError(w, r, err)
+	}
+	if user == nil {
+		json.NotFound(w, r)
+	}
+
 	feedBuilder := storage.NewFeedQueryBuilder(h.store, loggedUserID)
 	feedBuilder.WithFeedID(entry.FeedID)
 	feed, err := feedBuilder.GetFeed()
@@ -47,12 +56,16 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := processor.ProcessEntryWebPage(feed, entry); err != nil {
+	if err := processor.ProcessEntryWebPage(feed, entry, user); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	h.store.UpdateEntryContent(entry)
+	if err := h.store.UpdateEntryContent(entry); err != nil {
+		json.ServerError(w, r, err)
+	}
 
-	json.OK(w, r, map[string]string{"content": proxy.ImageProxyRewriter(h.router, entry.Content)})
+	readingTime := locale.NewPrinter(user.Language).Plural("entry.estimated_reading_time", entry.ReadingTime, entry.ReadingTime)
+
+	json.OK(w, r, map[string]string{"content": proxy.ImageProxyRewriter(h.router, entry.Content), "reading_time": readingTime})
 }

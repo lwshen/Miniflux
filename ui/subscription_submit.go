@@ -62,7 +62,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.AllowSelfSignedCertificates,
 	)
 	if findErr != nil {
-		logger.Error("[UI:SubmitSubscription] %s", findErr)
+		logger.Error("[UI:SubmitSubscription] %q -> %s", subscriptionForm.URL, findErr)
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", findErr)
 		html.OK(w, r, v.Render("add_subscription"))
@@ -91,6 +91,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			RewriteRules:                subscriptionForm.RewriteRules,
 			BlocklistRules:              subscriptionForm.BlocklistRules,
 			KeeplistRules:               subscriptionForm.KeeplistRules,
+			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
 		})
 		if err != nil {
